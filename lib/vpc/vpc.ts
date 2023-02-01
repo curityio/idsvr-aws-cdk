@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /*
  * Copyright 2023 Curity AB
  *
@@ -14,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import 'source-map-support/register';
-import * as cdk from 'aws-cdk-lib';
-import { IdsvrAwsCdkStack } from '../lib/idsvr-aws-cdk-stack';
+import { IdsvrAwsCdkStack } from '../idsvr-aws-cdk-stack';
+import { StackProps } from 'aws-cdk-lib';
+import { IVpc, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Utils } from '../utils/utils';
 
-const app = new cdk.App();
+export class AwsVpc {
+  private _vpc: IVpc;
 
-const idsvrAwsCdkStack = new IdsvrAwsCdkStack(app, 'IdsvrAwsCdkStack', {
-  stackName: 'curity-idsvr',
-  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-  description: 'This stack includes resources needed to deploy the Curity Identity Server into AWS environment'
-});
+  constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
+    // Import existing VPC config
+    this._vpc = Vpc.fromLookup(stack, 'import-existing-vpc', { vpcId: customOptions.environmentVariables.AWS_VPC_ID }); // always creating a object ?
+  }
 
-// Add a tag to all constructs in the app
-cdk.Tags.of(app).add('part-of', 'IdsvrAwsCdkStack');
+  get vpc() {
+    return this._vpc;
+  }
+}

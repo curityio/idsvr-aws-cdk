@@ -1,12 +1,14 @@
-  #cloud-config
-  # vim: syntax=yaml
-  write_files:
+#cloud-config
+# vim: syntax=yaml
+write_files:
   - content: |
       CONFIG_ENCRYPTION_KEY="$configEncryptionKey"
-      CURITY_CFN_ADMIN="true"
+      CURITY_CFN_RUNTIME="true"
       S3_BUCKET_NAME="$bucketName"
-      PASSWORD="$adminPassword"
-      SERVICE_ROLE="admin"
+      RUNTIME_SERVICE_ROLE="$runtimeServiceRole"
+      CF_STACK_ID="$awsStackId"
+      AWS_REGION="$awsRegion"
+      SIGNAL_RESOURCE_ID="runtime-asg"
       EFS_DNS="$efsDomain"
       CLOUDWATCH_NAMESPACE="$cloudWatchNamespace"
       ENABLE_CLOUDWATCH_LOGS=$enableCloudwatchLogs
@@ -25,14 +27,14 @@
       [Service]
       Environment=PROMETHEUS_SCRAPE_URL=http://localhost:4466/metrics
       Environment=CLOUDWATCH_NAMESPACE=$cloudwatchNamespace
-      Environment=PROMETHEUS_SCRAPE_INTERVAL=$MetricsScrapeInterval
+      Environment=PROMETHEUS_SCRAPE_INTERVAL=30
       Environment=CLOUDWATCH_PUBLISH_TIMEOUT=5
-      Environment=CLOUDWATCH_REGION="$awsRegion"
+      Environment=CLOUDWATCH_REGION=$awsRegion
       User=idsvr
       ExecStart=/usr/local/bin/prometheus-to-cloudwatch
       [Install]
       WantedBy=multi-user.target
-    path: /etc/systemd/system/idsvrmetrics.service  
+    path: /etc/systemd/system/idsvrmetrics.service
   - content: |
       {
         "agent": {
@@ -44,49 +46,49 @@
               "collect_list": [
               {
                 "file_path": "/opt/idsvr/var/log/cluster.log",
-                "log_group_name": "adminNodeLogGroup",
+                "log_group_name": "runtimeNodeLogGroup",
                 "log_stream_name": "{instance_id}/cluster.log",
                 "timezone": "UTC",
                 "timestamp_format": "%Y-%m-%dT%H:%M:%S:%f%z"
               },
               {
                 "file_path": "/opt/idsvr/var/log/server.log",
-                "log_group_name": "adminNodeLogGroup",
+                "log_group_name": "runtimeNodeLogGroup",
                 "log_stream_name": "{instance_id}/server.log",
                 "timezone": "UTC",
                 "timestamp_format": "%Y-%m-%dT%H:%M:%S:%f%z"
               },
               {
                 "file_path": "/opt/idsvr/var/log/confsvc.log",
-                "log_group_name": "adminNodeLogGroup",
+                "log_group_name": "runtimeNodeLogGroup",
                 "log_stream_name": "{instance_id}/confsvc.log",
                 "timezone": "UTC",
                 "timestamp_format": "%d %b %Y %H:%M:%S.%f"
               },
               {
                 "file_path": "/opt/idsvr/var/log/confsvc-internal.log",
-                "log_group_name": "adminNodeLogGroup",
+                "log_group_name": "runtimeNodeLogGroup",
                 "log_stream_name": "{instance_id}/confsvc-internal.log",
                 "timezone": "UTC",
                 "timestamp_format": " %-d-%b-%Y::%H:%M:%S.%f"
               },
               {
                 "file_path": "/opt/idsvr/var/log/post-commit-scripts.log",
-                "log_group_name": "adminNodeLogGroup",
+                "log_group_name": "runtimeNodeLogGroup",
                 "log_stream_name": "{instance_id}/post-commit-scripts.log",
                 "timezone": "UTC",
                 "timestamp_format": "%Y-%m-%dT%H:%M:%S:%f%z"
               },
               {
                 "file_path": "/opt/idsvr/var/log/audit.log",
-                "log_group_name": "adminNodeLogGroup",
+                "log_group_name": "runtimeNodeLogGroup",
                 "log_stream_name": "{instance_id}/audit.log",
                 "timezone": "UTC",
                 "timestamp_format": "%Y-%m-%dT%H:%M:%S:%f%z"
               },
               {
                 "file_path": "/opt/idsvr/var/log/request.log",
-                "log_group_name": "adminNodeLogGroup",
+                "log_group_name": "runtimeNodeLogGroup",
                 "log_stream_name": "{instance_id}/request.log",
                 "timezone": "UTC",
                 "timestamp_format": "%Y-%m-%dT%H:%M:%S:%f%z"
