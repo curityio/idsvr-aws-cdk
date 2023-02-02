@@ -25,8 +25,9 @@ export class AwsLambda {
   _findLatestCurityAmiLambda: Function;
   _customResource: CustomResource;
 
+  /* Finds the latest available Curity Identity Server AMI available in the specified aws region */
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
-    this._findLatestCurityAmiLambda = new Function(stack, 'find-curity-ami', {
+    this._findLatestCurityAmiLambda = new Function(stack, 'find-latest-curity-ami', {
       runtime: Runtime.NODEJS_18_X,
       functionName: 'find-latest-curity-ami',
       memorySize: 250,
@@ -42,14 +43,12 @@ export class AwsLambda {
       resources: ['*']
     });
 
-    //  attach the policy to the function's role
     this._findLatestCurityAmiLambda.role?.attachInlinePolicy(
       new Policy(stack, 'describe-images', {
         statements: [describeImagesPolicy]
       })
     );
 
-    // FindAMI custom resource
     const provider = new Provider(stack, 'provider', {
       onEventHandler: this._findLatestCurityAmiLambda,
       logRetention: RetentionDays.ONE_WEEK

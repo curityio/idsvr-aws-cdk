@@ -24,6 +24,7 @@ export class AwsIam {
   private _curityRuntimeIAMRole: Role;
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
+    /* IAM policy to allow Curity admin node to push initial cluster config (= cluster.xml) to the cluster config S3 bucket , send logs to cloudwatch etc .. */
     this._adminNodeIAMPolicy = new PolicyDocument({
       statements: [
         new PolicyStatement({
@@ -44,11 +45,12 @@ export class AwsIam {
         new PolicyStatement({
           actions: ['logs:PutLogEvents', 'logs:CreateLogStream'],
           resources: [`${customOptions.adminNodeLogGroup.logGroupArn}:log-stream:*`, customOptions.adminNodeLogGroup.logGroupArn],
-          effect: Effect.ALLOW
+          effect: customOptions.environmentVariables.ENABLE_CLOUDWATCH_LOGS === 'true' ? Effect.ALLOW : Effect.DENY
         })
       ]
     });
 
+    /* IAM policy to allow Curity runtime nodes to read initial cluster config (= cluster.xml) from the cluster config S3 bucket , send logs to cloudwatch etc .. */
     this._runtimeNodeIAMPolicy = new PolicyDocument({
       statements: [
         new PolicyStatement({
@@ -74,12 +76,12 @@ export class AwsIam {
         new PolicyStatement({
           actions: ['logs:PutLogEvents', 'logs:CreateLogStream'],
           resources: [`${customOptions.runtimeNodelogGroup.logGroupArn}:log-stream:*`, customOptions.runtimeNodelogGroup.logGroupArn],
-          effect: Effect.ALLOW
+          effect: customOptions.environmentVariables.ENABLE_CLOUDWATCH_LOGS === 'true' ? Effect.ALLOW : Effect.DENY
         })
       ]
     });
 
-    // create Admin node IAM Role
+    /* Instance profile role to be assumed by the admin node ec2 instance */
     this._curityAdminIAMRole = new Role(stack, 'admin-iam-role', {
       assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
       description: 'Curity Admin node IAM role',
@@ -87,7 +89,7 @@ export class AwsIam {
       inlinePolicies: { adminNodeIAMPolicy: this._adminNodeIAMPolicy }
     });
 
-    // create runtime node IAM Role
+    /* Instance profile role to be assumed by the runtime nodes ec2 instance */
     this._curityRuntimeIAMRole = new Role(stack, 'runtime-iam-role', {
       assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
       description: 'Curity Runtime node IAM role',

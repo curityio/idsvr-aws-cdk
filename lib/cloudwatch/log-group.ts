@@ -22,7 +22,6 @@ export class AwsLogGroup {
   private _runtimeNodeLogGroup: LogGroup;
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
-    // Admin node Log group
     this._adminNodelogGroup = new LogGroup(stack, 'admin-node-log-group', {
       retention: RetentionDays.INFINITE
     });

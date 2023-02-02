@@ -25,10 +25,9 @@ export class EC2UserData {
   private _runtimeNodeUserData: UserData;
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
-    // prepare admin node ec2 instance user-data
     const adminUserDataFilePath = 'config/admin-userdata.yaml';
     const runtimeUserDataFilePath = 'config/runtime-userdata.yaml';
-
+    /* Admin node ec2 instance userdata, More Info : https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html */
     const adminNodeUserDataOptions = {
       files: adminUserDataFilePath,
       from: [
@@ -56,7 +55,7 @@ export class EC2UserData {
       countMatches: true
     };
 
-    // prepare runtime node ec2 instance user-data
+    /* Runtime node ec2 instance userdata, More Info : https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html */
     const runtimeNodeUserDataOptions = {
       files: runtimeUserDataFilePath,
       from: [

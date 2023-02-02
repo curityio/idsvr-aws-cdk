@@ -29,6 +29,7 @@ export class AwsApplicationLoadBalancer {
       securityGroup: customOptions.albSecurityGroup
     });
 
+    /* if there is no TLS certificate available then only http listener is created */
     if (customOptions.environmentVariables.AWS_CERTIFICATE_ARN.length === 0) {
       const runtimeHttpListener = this._applicationLoadBalancer.addListener('runtime-http-listener', {
         port: 80,

@@ -37,10 +37,10 @@ export class IdsvrAwsCdkStack extends Stack {
     const awsRegion = props?.env?.region;
     const utils: Utils = new Utils();
 
-    /* Validate environment variables have been set*/
+    /* Validate environment variables have been set */
     utils.validateRequiredEnvironmentVariables();
 
-    /* Import the existing VPC for creating resources*/
+    /* Import the existing VPC for creating resources */
     const existingVpc = new AwsVpc(this, id, props, {
       environmentVariables: utils.requiredEnvironmentVariables
     });
@@ -120,13 +120,13 @@ export class IdsvrAwsCdkStack extends Stack {
       cfnScalingUpPolicy: runtimeAutoScalingGroup.asgScaleUpPolicy
     });
 
-    /* print Admin UI */
+    /* If the TLS certificate is not available then the Admin UI is accessible via the public IP address of the admin node ec2 instance */
     if (utils.requiredEnvironmentVariables.AWS_VPC_DEPLOYMENT_SUBNETS_TYPE === 'PUBLIC' && utils.optionalEnvironmentVariables.AWS_CERTIFICATE_ARN === '') {
       new CfnOutput(this, 'curity-admin-ui', {
         value: `https://${adminEC2Instance.adminNodeEC2Instance.instancePublicDnsName}:6749/admin`
       });
     }
-
+    /* If the TLS certificate is available then the Admin UI is accessible via the load balancer DNS */
     if (utils.optionalEnvironmentVariables.AWS_CERTIFICATE_ARN !== '') {
       new CfnOutput(this, 'curity-admin-ui-lb', {
         value: `https://${alb.loadBalancer.loadBalancerDnsName}:6749/admin`

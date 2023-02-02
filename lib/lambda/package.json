@@ -1,5 +1,5 @@
 {
-  "name": "lambda",
+  "name": "find-latest-curity-ami-lambda",
   "version": "1.0.0",
   "description": "",
   "main": "amilookup.js",

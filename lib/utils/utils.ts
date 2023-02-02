@@ -20,7 +20,7 @@ export class Utils {
   private _optionalEnvVariables: { [s: string]: string };
 
   constructor() {
-    // load .env file variables
+    /* Loads environment variables from `.env` file */
     dotenv.config();
     this._requiredEnvironmentVariables = {
       ADMIN_PASSWORD: process.env.ADMIN_PASSWORD?.trim() || '',

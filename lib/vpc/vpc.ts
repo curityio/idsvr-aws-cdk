@@ -16,14 +16,12 @@
 import { IdsvrAwsCdkStack } from '../idsvr-aws-cdk-stack';
 import { StackProps } from 'aws-cdk-lib';
 import { IVpc, Vpc } from 'aws-cdk-lib/aws-ec2';
-import { Utils } from '../utils/utils';
 
 export class AwsVpc {
   private _vpc: IVpc;
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
-    // Import existing VPC config
-    this._vpc = Vpc.fromLookup(stack, 'import-existing-vpc', { vpcId: customOptions.environmentVariables.AWS_VPC_ID }); // always creating a object ?
+    this._vpc = Vpc.fromLookup(stack, 'import-existing-vpc', { vpcId: customOptions.environmentVariables.AWS_VPC_ID });
   }
 
   get vpc() {

@@ -25,14 +25,14 @@ export class AwsSecurityGroup {
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
     this._adminSecurityGroup = new SecurityGroup(stack, 'admin-sg', {
       vpc: customOptions.existingVpc,
-      securityGroupName: 'admin-security-group',
+      securityGroupName: 'admin-node-security-group',
       description: 'admin node security group',
       allowAllOutbound: true
     });
 
     this._runtimeSecurityGroup = new SecurityGroup(stack, 'runtime-sg', {
       vpc: customOptions.existingVpc,
-      securityGroupName: 'runtime-security-group',
+      securityGroupName: 'runtime-node-security-group',
       description: 'runtime nodes security group',
       allowAllOutbound: true
     });
@@ -44,7 +44,6 @@ export class AwsSecurityGroup {
       allowAllOutbound: true
     });
 
-    // admin node security group rules
     if (customOptions.environmentVariables.AWS_CERTIFICATE_ARN.length === 0) {
       customOptions.environmentVariables.TRUSTED_IP_RANGE_CIDR.length === 0
         ? (this._adminSecurityGroup.addIngressRule(Peer.anyIpv4(), Port.tcp(6749), 'Allow access to 6749 port on admin node from 0.0.0.0/0'),
@@ -70,11 +69,11 @@ export class AwsSecurityGroup {
 
     this._adminSecurityGroup.addIngressRule(Peer.securityGroupId(this._runtimeSecurityGroup.securityGroupId), Port.tcp(6789), 'Runtime access');
 
-    // runtime node security group rules
+    /* Allow traffic from the load balancer to runtime nodes */
     this._runtimeSecurityGroup.addIngressRule(Peer.securityGroupId(this._albSecurityGroup.securityGroupId), Port.tcp(4465), 'Allow http access from load balancer only');
     this._runtimeSecurityGroup.addIngressRule(Peer.securityGroupId(this._albSecurityGroup.securityGroupId), Port.tcp(8443), 'Allow http access from load balancer only');
 
-    // LB sg rules
+    /* Allow access to load balancer from public internet or specified load balancer IP range CIDR */
     customOptions.environmentVariables.LOADBALANCER_IP_RANGE_CIDR.length === 0
       ? this._albSecurityGroup.addIngressRule(Peer.anyIpv4(), Port.tcp(80), 'Allow http Access from 0.0.0.0/0')
       : this._albSecurityGroup.addIngressRule(Peer.ipv4(customOptions.environmentVariables.LOADBALANCER_IP_RANGE_CIDR), Port.tcp(80), 'Allow http Access from LB IP range');
