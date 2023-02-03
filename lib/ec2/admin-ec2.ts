@@ -32,7 +32,7 @@ export class AdminNodeInstance {
       }),
       role: customOptions.curityAdminIAMRole,
       securityGroup: customOptions.adminSecurityGroup,
-      keyName: customOptions.environmentVariables.AWS_SSH_KEY_NAME,
+      keyName: customOptions.environmentVariables.AWS_EC2_KEY_PAIR_NAME,
       userData: customOptions.adminNodeUserData
     });
   }

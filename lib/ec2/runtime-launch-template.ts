@@ -24,7 +24,7 @@ export class RuntimeLaunchTemplate {
     this._runtimeLaunchTemplate = new LaunchTemplate(stack, 'curity-runtime-node', {
       instanceType: new InstanceType(process.env.RUNTIME_INSTANCE_TYPE || 't3.small'),
       launchTemplateName: 'curity-runtime-node',
-      keyName: customOptions.environmentVariables.AWS_SSH_KEY_NAME,
+      keyName: customOptions.environmentVariables.AWS_EC2_KEY_PAIR_NAME,
       machineImage: new GenericLinuxImage({
         [customOptions.awsRegion]: customOptions.lambdaResource.getAtt('amiId').toString()
       }),

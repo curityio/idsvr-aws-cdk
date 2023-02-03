@@ -29,7 +29,7 @@ export class EC2UserData {
     const runtimeUserDataFilePath = 'config/runtime-userdata.yaml';
     /* Admin node ec2 instance userdata, More Info : https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html */
     const adminNodeUserDataOptions = {
-      files: adminUserDataFilePath,
+      files: path.resolve(__dirname, adminUserDataFilePath),
       from: [
         '$bucketName',
         '$adminPassword',
@@ -57,7 +57,7 @@ export class EC2UserData {
 
     /* Runtime node ec2 instance userdata, More Info : https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html */
     const runtimeNodeUserDataOptions = {
-      files: runtimeUserDataFilePath,
+      files: path.resolve(__dirname, runtimeUserDataFilePath),
       from: [
         '$bucketName',
         '$runtimeServiceRole',

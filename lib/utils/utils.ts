@@ -34,7 +34,7 @@ export class Utils {
       RUNTIME_MAX_REQUESTS_PER_NODE: process.env.RUNTIME_MAX_REQUESTS_PER_NODE?.trim() || '',
       AWS_VPC_ID: process.env.AWS_VPC_ID?.trim() || '',
       AWS_VPC_DEPLOYMENT_SUBNETS_TYPE: process.env.AWS_VPC_DEPLOYMENT_SUBNETS_TYPE?.trim() || '',
-      AWS_SSH_KEY_NAME: process.env.AWS_SSH_KEY_NAME?.trim() || '',
+      AWS_EC2_KEY_PAIR_NAME: process.env.AWS_EC2_KEY_PAIR_NAME?.trim() || '',
       ENABLE_CLOUDWATCH_LOGS: process.env.ENABLE_CLOUDWATCH_LOGS?.trim() || '',
       METRICS_SCRAPE_INTERVAL_IN_SECONDS: process.env.METRICS_SCRAPE_INTERVAL_IN_SECONDS?.trim() || ''
     };
