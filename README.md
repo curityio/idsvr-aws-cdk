@@ -99,14 +99,14 @@ Also, the first-run script of the Curity Identity Server will copy all files und
     git clone git@github.com:curityio/idsvr-aws-cdk.git
     cd idsvr-aws-cdk
     ```
- 2. Bootstrap the CDK  
-    ```sh
-    cdk bootstrap
-    ``` 
- 3. Install cdk dependencies
+ 2. Install cdk dependencies
     ```sh
     npm install package.json
     npm install lib/lambda/package.json
+    ```     
+ 3. Bootstrap the CDK  
+    ```sh
+    cdk bootstrap
     ``` 
  4. Deploy the Curity Identity Server in the connected AWS account
  
