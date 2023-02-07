@@ -24,21 +24,21 @@ export class AwsSecurityGroup {
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
     this._adminSecurityGroup = new SecurityGroup(stack, 'admin-sg', {
-      vpc: customOptions.existingVpc,
+      vpc: customOptions.vpc,
       securityGroupName: 'admin-node-security-group',
       description: 'admin node security group',
       allowAllOutbound: true
     });
 
     this._runtimeSecurityGroup = new SecurityGroup(stack, 'runtime-sg', {
-      vpc: customOptions.existingVpc,
+      vpc: customOptions.vpc,
       securityGroupName: 'runtime-node-security-group',
       description: 'runtime nodes security group',
       allowAllOutbound: true
     });
 
     this._albSecurityGroup = new SecurityGroup(stack, 'alb-sg', {
-      vpc: customOptions.existingVpc,
+      vpc: customOptions.vpc,
       securityGroupName: 'alb-security-group',
       description: 'ALB security group',
       allowAllOutbound: true

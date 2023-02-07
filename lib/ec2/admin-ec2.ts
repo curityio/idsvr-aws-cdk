@@ -22,7 +22,7 @@ export class AdminNodeInstance {
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
     this._adminEC2Instance = new Instance(stack, 'curity-admin-node', {
-      vpc: customOptions.existingVpc,
+      vpc: customOptions.vpc,
       vpcSubnets: {
         subnetType: customOptions.environmentVariables.AWS_VPC_DEPLOYMENT_SUBNETS_TYPE === 'PRIVATE' ? SubnetType.PRIVATE_WITH_EGRESS : SubnetType.PUBLIC
       },

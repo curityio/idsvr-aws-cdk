@@ -3,7 +3,7 @@
 [![Quality](https://img.shields.io/badge/quality-experiment-red)](https://curity.io/resources/code-examples/status/)
 [![Availability](https://img.shields.io/badge/availability-source-blue)](https://curity.io/resources/code-examples/status/)
 
-This aws cdk project deploys a Curity Identity Server cluster in AWS cloud. The cluster is installed in a [Standalone Admin setup](https://curity.io/docs/idsvr/latest/system-admin-guide/deployment/clustering.html#standalone-admin-setup) and the cluster configuration is generated during the deployment process.
+This aws cdk project deploys the Curity Identity Server cluster in the AWS cloud. The cluster is deployed in a [Standalone Admin setup](https://curity.io/docs/idsvr/latest/system-admin-guide/deployment/clustering.html#standalone-admin-setup) and the cluster configuration is generated during the deployment process.
 
 # Prepare the Installation
 
@@ -110,10 +110,10 @@ Also, the first-run script of the Curity Identity Server will copy all files und
     ``` 
  4. Deploy the Curity Identity Server in the connected AWS account
  
-    Review the values set in `.env` file , make sure that `AWS_VPC_ID` and `AWS_EC2_KEY_PAIR_NAME` are set before proceeding.
+    Review the values set in `.env` file , make sure that `AWS_EC2_KEY_PAIR_NAME` is set before proceeding.
    
     ```sh
-    cdk deploy
+    cdk deploy --profile <profile-name>
     ```
  5. Few other useful commands
     ```sh
@@ -141,6 +141,8 @@ Installed Resources:
 
 ## Cleanup
 Run `cdk destroy` to remove the installation. 
+> **_NOTE:_** if an error like `Error: Resolution error: Unrecognized token key: TOKEN.nnn.` is encountered then please re-try after waiting for few seconds.
+
 
 ## More Information
 

@@ -25,7 +25,7 @@ export class RuntimeAutoScalingGroup {
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
     this._runtimeAutoScalingGroup = new AutoScalingGroup(stack, 'runtime-asg', {
-      vpc: customOptions.existingVpc,
+      vpc: customOptions.vpc,
       autoScalingGroupName: 'runtime-asg',
       vpcSubnets: {
         subnetType: customOptions.environmentVariables.AWS_VPC_DEPLOYMENT_SUBNETS_TYPE === 'PRIVATE' ? SubnetType.PRIVATE_WITH_EGRESS : SubnetType.PUBLIC

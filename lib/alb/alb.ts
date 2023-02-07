@@ -24,7 +24,7 @@ export class AwsApplicationLoadBalancer {
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
     this._applicationLoadBalancer = new ApplicationLoadBalancer(stack, 'alb', {
       loadBalancerName: 'curity-alb',
-      vpc: customOptions.existingVpc,
+      vpc: customOptions.vpc,
       internetFacing: true,
       securityGroup: customOptions.albSecurityGroup
     });

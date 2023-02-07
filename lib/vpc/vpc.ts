@@ -15,13 +15,26 @@
  */
 import { IdsvrAwsCdkStack } from '../idsvr-aws-cdk-stack';
 import { StackProps } from 'aws-cdk-lib';
-import { IVpc, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { IpAddresses, IVpc, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 
 export class AwsVpc {
   private _vpc: IVpc;
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
-    this._vpc = Vpc.fromLookup(stack, 'import-existing-vpc', { vpcId: customOptions.environmentVariables.AWS_VPC_ID });
+    if (customOptions.environmentVariables !== undefined && customOptions?.environmentVariables.AWS_VPC_ID !== '') {
+      this._vpc = Vpc.fromLookup(stack, 'import-existing-vpc', { vpcId: customOptions.environmentVariables.AWS_VPC_ID });
+    } else {
+      this._vpc = new Vpc(stack, 'curity-idsvr-vpc', {
+        maxAzs: 2,
+        enableDnsHostnames: true,
+        enableDnsSupport: true,
+        ipAddresses: IpAddresses.cidr('10.0.0.0/16'),
+        subnetConfiguration: [
+          { name: 'private', cidrMask: 24, subnetType: SubnetType.PRIVATE_WITH_EGRESS },
+          { name: 'public', cidrMask: 24, subnetType: SubnetType.PUBLIC }
+        ]
+      });
+    }
   }
 
   get vpc() {

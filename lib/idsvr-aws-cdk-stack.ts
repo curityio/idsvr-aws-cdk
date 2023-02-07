@@ -1,3 +1,4 @@
+import { IVpc } from 'aws-cdk-lib/aws-ec2';
 /*
  * Copyright 2023 Curity AB
  *
@@ -36,14 +37,20 @@ export class IdsvrAwsCdkStack extends Stack {
 
     const awsRegion = props?.env?.region;
     const utils: Utils = new Utils();
+    let awsVPC: IVpc;
 
     /* Validate environment variables have been set */
     utils.validateRequiredEnvironmentVariables();
 
-    /* Import the existing VPC for creating resources */
-    const existingVpc = new AwsVpc(this, id, props, {
-      environmentVariables: utils.requiredEnvironmentVariables
-    });
+    if (utils.optionalEnvironmentVariables.AWS_VPC_ID !== '') {
+      /* Import the existing VPC for deploying resources */
+      awsVPC = new AwsVpc(this, id, props, {
+        environmentVariables: utils.optionalEnvironmentVariables
+      }).vpc;
+    } else {
+      /* Create a new VPC */
+      awsVPC = new AwsVpc(this, id, props, {}).vpc;
+    }
 
     /* create a new S3 bucket to store the initial cluster configuration */
     const clusterConfigBucket = new ClusterConfigBucket(this, id, props, customOptions);
@@ -69,7 +76,7 @@ export class IdsvrAwsCdkStack extends Stack {
     });
 
     /* creates security groups for admin node, runtime node and application load balancer for restricting access */
-    const securityGroup = new AwsSecurityGroup(this, id, props, { existingVpc: existingVpc.vpc, environmentVariables: utils.optionalEnvironmentVariables });
+    const securityGroup = new AwsSecurityGroup(this, id, props, { vpc: awsVPC, environmentVariables: utils.optionalEnvironmentVariables });
 
     /* creates a lambda function to find Curity Identity Server latest ami available in the region */
     const findAmiLambdaResource = new AwsLambda(this, id, props, { awsRegion });
@@ -77,7 +84,7 @@ export class IdsvrAwsCdkStack extends Stack {
     /* Provisions Curity Identity Server Admin node */
     const adminEC2Instance = new AdminNodeInstance(this, id, props, {
       awsRegion,
-      existingVpc: existingVpc.vpc,
+      vpc: awsVPC,
       environmentVariables: utils.requiredEnvironmentVariables,
       lambdaResource: findAmiLambdaResource.lambdaCustomResource,
       curityAdminIAMRole: iamComponents.adminIAMRole,
@@ -97,14 +104,14 @@ export class IdsvrAwsCdkStack extends Stack {
 
     /* creates autoscaling group for Curity Identity Server runtime nodes */
     const runtimeAutoScalingGroup = new RuntimeAutoScalingGroup(this, id, props, {
-      existingVpc: existingVpc.vpc,
+      vpc: awsVPC,
       environmentVariables: utils.requiredEnvironmentVariables,
       runtimeLaunchTemplate: runtimeLaunchTemplate.runtimeLaunchTemplate
     });
 
     /* creates a layer 7 application load balancer */
     const alb = new AwsApplicationLoadBalancer(this, id, props, {
-      existingVpc: existingVpc.vpc,
+      vpc: awsVPC,
       albSecurityGroup: securityGroup.albSecurityGroup,
       runtimeAutoScalingGroup: runtimeAutoScalingGroup.runtimeAutoScalingGroup,
       adminEC2Instance: adminEC2Instance.adminNodeEC2Instance,
