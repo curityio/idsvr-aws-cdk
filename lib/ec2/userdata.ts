@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 import * as replaceInFile from 'replace-in-file';
+import * as fs from 'fs';
+import * as path from 'path';
 import { readFileSync } from 'fs';
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { IdsvrAwsCdkStack } from '../idsvr-aws-cdk-stack';
 import { UserData } from 'aws-cdk-lib/aws-ec2';
-import path = require('path');
 
 export class EC2UserData {
   private _adminNodeUserData: UserData;
@@ -27,6 +28,18 @@ export class EC2UserData {
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
     const adminUserDataFilePath = 'userdata/admin-userdata.yaml';
     const runtimeUserDataFilePath = 'userdata/runtime-userdata.yaml';
+
+    /* clean up old files before proceeding with replacement */
+    const sourceDirectory = path.resolve(__dirname, 'userdata-templates');
+    const targetDirectory = path.resolve(__dirname, 'userdata');
+
+    const files = fs.readdirSync(sourceDirectory);
+
+    files.forEach((file) => {
+      const sourceFile = path.resolve(sourceDirectory, file);
+      const targetFile = path.resolve(targetDirectory, file);
+      fs.copyFileSync(sourceFile, targetFile);
+    });
 
     /* Admin node ec2 instance userdata, More Info : https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html */
     const adminNodeUserDataOptions = {

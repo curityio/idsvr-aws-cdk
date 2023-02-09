@@ -42,10 +42,8 @@ delete_acm_certificate() {
 
 deploy_idsvr() {
   echo "Creating AWS resources and deploying the Curity Identity Server .."
+  # create a new directory to store resolved userdata files
   mkdir -p ./lib/ec2/userdata
-  # copy userdata templates to newly created directory for modification
-  cp -a ./lib/ec2/userdata-templates/*.yaml ./lib/ec2/userdata
-
   cdk deploy
 
 }

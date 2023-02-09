@@ -145,20 +145,6 @@ Installed Resources:
 ## Cleanup
 Run `./deploy-idsvr-aws-cdk --delete` to remove the installation. 
 
-## Known Issue
-Sometimes the AWS cdk is not able to resolve the tokens which were generated during the synthesis phase and in such a situations, it throws following exception
-
-```
-Error: Resolution error: Resolution error: Resolution error: Resolution error: Unrecognized token key: TOKEN.nnn.
-Object creation stack:
-  at stack traces disabled.
-Object creation stack:
-  at Execute again with CDK_DEBUG=true to capture stack traces..
-    at TokenMap.lookupToken (/Users/suren/workspace/curity/github/idsvr-aws-cdk/node_modules/aws-cdk-lib/core/lib/private/token-map.js:1:2020)
-    at TokenString.split (/Users/suren/workspace/curity/github/idsvr-aws-cdk/node_modules/aws-cdk-lib/core/lib/private/encoding.js:1:1658)
-```
-If above error is encountered then please retry the operation after waiting for few seconds.
-
 ## Summary
 The deployment returns two URLs pointing to the Admin node and the runtime respectively. Before accessing the runtime, please complete the [first run configuration](https://curity.io/resources/learn/first-config/)
 
