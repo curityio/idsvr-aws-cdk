@@ -105,7 +105,7 @@ Also, the first-run script of the Curity Identity Server will copy all files und
  2. Install cdk dependencies
     ```sh
     npm install package.json
-    npm install lib/lambda/package.json
+    npm --prefix lib/lambda install
     ```     
  3. Bootstrap the CDK  
     ```sh

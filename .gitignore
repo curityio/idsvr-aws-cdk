@@ -20,5 +20,4 @@ node_modules/
 *.pem
 *.key
 *.csr
-*.ext
 *.srl
