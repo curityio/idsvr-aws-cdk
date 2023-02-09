@@ -5,6 +5,7 @@ package-lock.json
 yarn.lock
 .cdk.staging
 cdk.out
+userdata
 
 # Optional npm cache directory
 .npm
@@ -14,3 +15,10 @@ cdk.out
 
 # Dependency directories
 node_modules/
+
+# self signed certificates
+*.pem
+*.key
+*.csr
+*.ext
+*.srl

@@ -3,7 +3,9 @@
 [![Quality](https://img.shields.io/badge/quality-experiment-red)](https://curity.io/resources/code-examples/status/)
 [![Availability](https://img.shields.io/badge/availability-source-blue)](https://curity.io/resources/code-examples/status/)
 
-This aws cdk project deploys the Curity Identity Server cluster in the AWS cloud. The cluster is deployed in a [Standalone Admin setup](https://curity.io/docs/idsvr/latest/system-admin-guide/deployment/clustering.html#standalone-admin-setup) and the cluster configuration is generated during the deployment process.
+This aws cdk project deploys a basic load balanced EC2 deployment of the Curity Identity Server, with an in-memory
+HSQL database, to demonstrate how to manage cloud resources using the CDK. The Curity Identity Server cluster is deployed in a [Standalone Admin setup](https://curity.io/docs/idsvr/latest/system-admin-guide/deployment/clustering.html#standalone-admin-setup) using a cluster configuration which is auto-generated during the deployment process.
+
 
 # Prepare the Installation
 
@@ -14,6 +16,7 @@ Installing using `aws cdk` has the following prerequisites:
 - [NodeJS & npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed. AWS CDK applications require Node.js 10.13 or later (*Node.js versions 13.0.0 through 13.6.0 are not compatible with the AWS CDK due to compatibility issues with its dependencies*)
 - [Typescript](https://www.npmjs.com/package/typescript)
 - [AWS CDK v2](https://aws.amazon.com/getting-started/guides/setup-cdk/module-two/)
+- [EC2 key Pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
 
 ## Configuration
 This project provides configuration options via an `.env` file available in the root of the project.
@@ -109,11 +112,11 @@ Also, the first-run script of the Curity Identity Server will copy all files und
     cdk bootstrap
     ``` 
  4. Deploy the Curity Identity Server in the connected AWS account
- 
-    Review the values set in `.env` file , make sure that `AWS_EC2_KEY_PAIR_NAME` is set before proceeding.
+
+    Please make sure that the **AWS_PROFILE** environment variable is set in command line terminal (*export AWS_PROFILE=my-profile*) to the correct aws profile name.
    
     ```sh
-    cdk deploy --profile <profile-name>
+    ./deploy-idsvr-aws-cdk --install
     ```
  5. Few other useful commands
     ```sh
@@ -140,9 +143,31 @@ Installed Resources:
 ![installed resources](./docs/aws-cdk-deployed-resources.png)
 
 ## Cleanup
-Run `cdk destroy` to remove the installation. 
-> **_NOTE:_** if an error like `Error: Resolution error: Unrecognized token key: TOKEN.nnn.` is encountered then please re-try after waiting for few seconds.
+Run `./deploy-idsvr-aws-cdk --delete` to remove the installation. 
 
+## Known Issue
+Sometimes the AWS cdk is not able to resolve the tokens which were generated during the synthesis phase and in such a situations, it throws following exception
+
+```
+Error: Resolution error: Resolution error: Resolution error: Resolution error: Unrecognized token key: TOKEN.nnn.
+Object creation stack:
+  at stack traces disabled.
+Object creation stack:
+  at Execute again with CDK_DEBUG=true to capture stack traces..
+    at TokenMap.lookupToken (/Users/suren/workspace/curity/github/idsvr-aws-cdk/node_modules/aws-cdk-lib/core/lib/private/token-map.js:1:2020)
+    at TokenString.split (/Users/suren/workspace/curity/github/idsvr-aws-cdk/node_modules/aws-cdk-lib/core/lib/private/encoding.js:1:1658)
+```
+If above error is encountered then please retry the operation after waiting for few seconds.
+
+## Summary
+The deployment returns two URLs pointing to the Admin node and the runtime respectively. Before accessing the runtime, please complete the [first run configuration](https://curity.io/resources/learn/first-config/)
+
+```
+Outputs:
+IdsvrAwsCdkStack.curityadminuilb = https://curity-alb-662716172.eu-west-1.elb.amazonaws.com:6749/admin
+IdsvrAwsCdkStack.curityruntimeopenidconfiguration = https://curity-alb-662716172.eu-west-1.elb.amazonaws.com/oauth/v2/oauth-anonymous/.well-known/openid-configuration
+
+```
 
 ## More Information
 

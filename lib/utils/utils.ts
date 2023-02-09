@@ -44,7 +44,8 @@ export class Utils {
       CLOUDWATCH_NAMESPACE: process.env.CLOUDWATCH_NAMESPACE?.trim() || '',
       AWS_EFS_DNS: process.env.AWS_EFS_DNS?.trim() || '',
       CONFIG_ENCRYPTION_KEY: process.env.CONFIG_ENCRYPTION_KEY?.trim() || '',
-      AWS_CERTIFICATE_ARN: process.env.AWS_CERTIFICATE_ARN?.trim() || ''
+      AWS_CERTIFICATE_ARN: process.env.AWS_CERTIFICATE_ARN?.trim() || '',
+      AWS_ACM_SELF_SIGNED_CERT_ARN: process.env.AWS_ACM_SELF_SIGNED_CERT_ARN || ''
     };
   }
 

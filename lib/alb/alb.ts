@@ -28,70 +28,54 @@ export class AwsApplicationLoadBalancer {
       internetFacing: true,
       securityGroup: customOptions.albSecurityGroup
     });
+    /* create https listener for admin and runtime nodes */
+    const runtimeHttpsListener = this._applicationLoadBalancer.addListener('runtime-https-listener', {
+      port: 443,
+      open: true,
+      certificates:
+        customOptions.environmentVariables.AWS_CERTIFICATE_ARN.length !== 0
+          ? [ListenerCertificate.fromArn(customOptions.environmentVariables.AWS_CERTIFICATE_ARN)]
+          : [ListenerCertificate.fromArn(customOptions.environmentVariables.AWS_ACM_SELF_SIGNED_CERT_ARN)]
+    });
 
-    /* if there is no TLS certificate available then only http listener is created */
-    if (customOptions.environmentVariables.AWS_CERTIFICATE_ARN.length === 0) {
-      const runtimeHttpListener = this._applicationLoadBalancer.addListener('runtime-http-listener', {
-        port: 80,
-        open: true
-      });
+    runtimeHttpsListener.addTargets('runtime-nodes', {
+      port: 8443,
+      targets: [customOptions.runtimeAutoScalingGroup],
+      protocol: ApplicationProtocol.HTTPS,
+      healthCheck: {
+        path: '/',
+        port: '4465',
+        protocol: Protocol.HTTP,
+        unhealthyThresholdCount: 5,
+        healthyThresholdCount: 3,
+        interval: Duration.seconds(10)
+      }
+    });
 
-      runtimeHttpListener.addTargets('runtime-nodes', {
-        port: 8443,
-        targets: [customOptions.runtimeAutoScalingGroup],
-        protocol: ApplicationProtocol.HTTP,
-        healthCheck: {
-          path: '/',
-          port: '4465',
-          protocol: Protocol.HTTP,
-          unhealthyThresholdCount: 5,
-          healthyThresholdCount: 3,
-          interval: Duration.seconds(10)
-        }
-      });
-    } else if (customOptions.environmentVariables.AWS_CERTIFICATE_ARN.length !== 0) {
-      const runtimeHttpsListener = this._applicationLoadBalancer.addListener('runtime-https-listener', {
-        port: 443,
-        open: true,
-        certificates: [ListenerCertificate.fromArn(customOptions.environmentVariables.AWS_CERTIFICATE_ARN)]
-      });
+    const adminHttpsListener = this._applicationLoadBalancer.addListener('admin-https-listener', {
+      port: 6749,
+      protocol: ApplicationProtocol.HTTPS,
+      open: true,
+      certificates:
+        customOptions.environmentVariables.AWS_CERTIFICATE_ARN.length !== 0
+          ? [ListenerCertificate.fromArn(customOptions.environmentVariables.AWS_CERTIFICATE_ARN)]
+          : [ListenerCertificate.fromArn(customOptions.environmentVariables.AWS_ACM_SELF_SIGNED_CERT_ARN)]
+    });
 
-      runtimeHttpsListener.addTargets('runtime-nodes', {
-        port: 8443,
-        targets: [customOptions.runtimeAutoScalingGroup],
-        protocol: ApplicationProtocol.HTTPS,
-        healthCheck: {
-          path: '/',
-          port: '4465',
-          protocol: Protocol.HTTP,
-          unhealthyThresholdCount: 5,
-          healthyThresholdCount: 3,
-          interval: Duration.seconds(10)
-        }
-      });
-
-      const adminHttpsListener = this._applicationLoadBalancer.addListener('admin-https-listener', {
-        port: 6749,
-        protocol: ApplicationProtocol.HTTPS,
-        open: true,
-        certificates: [ListenerCertificate.fromArn(customOptions.environmentVariables.AWS_CERTIFICATE_ARN)]
-      });
-
-      adminHttpsListener.addTargets('admin-node', {
-        port: 6749,
-        targets: [new InstanceTarget(customOptions.adminEC2Instance)],
-        protocol: ApplicationProtocol.HTTPS,
-        healthCheck: {
-          path: '/',
-          port: '4465',
-          protocol: Protocol.HTTP,
-          unhealthyThresholdCount: 5,
-          healthyThresholdCount: 3,
-          interval: Duration.seconds(10)
-        }
-      });
-      this._applicationLoadBalancer.addRedirect();
-    }
+    adminHttpsListener.addTargets('admin-node', {
+      port: 6749,
+      targets: [new InstanceTarget(customOptions.adminEC2Instance)],
+      protocol: ApplicationProtocol.HTTPS,
+      healthCheck: {
+        path: '/',
+        port: '4465',
+        protocol: Protocol.HTTP,
+        unhealthyThresholdCount: 5,
+        healthyThresholdCount: 3,
+        interval: Duration.seconds(10)
+      }
+    });
+    this._applicationLoadBalancer.addRedirect();
   }
 
   get loadBalancer() {

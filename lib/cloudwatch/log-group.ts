@@ -19,14 +19,22 @@ import { RetentionDays, LogGroup } from 'aws-cdk-lib/aws-logs';
 
 export class AwsLogGroup {
   private _adminNodelogGroup: LogGroup;
+  private _adminNodelogGroupName: string;
+
   private _runtimeNodeLogGroup: LogGroup;
+  private _runtimeNodeLogGroupName: string;
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
+    this._adminNodelogGroupName = `admin-node-log-${Math.random().toString(36).slice(2)}`;
+    this._runtimeNodeLogGroupName = `runtime-node-log-${Math.random().toString(36).slice(2)}`;
+
     this._adminNodelogGroup = new LogGroup(stack, 'admin-node-log-group', {
+      logGroupName: this._adminNodelogGroupName,
       retention: RetentionDays.INFINITE
     });
 
     this._runtimeNodeLogGroup = new LogGroup(stack, 'runtime-node-log-group', {
+      logGroupName: this._runtimeNodeLogGroupName,
       retention: RetentionDays.INFINITE
     });
   }
@@ -37,5 +45,12 @@ export class AwsLogGroup {
 
   get runtimeNodelogGroup() {
     return this._runtimeNodeLogGroup;
+  }
+  get adminNodelogGroupName() {
+    return this._adminNodelogGroupName;
+  }
+
+  get runtimeNodelogGroupName() {
+    return this._runtimeNodeLogGroupName;
   }
 }

@@ -25,8 +25,9 @@ export class EC2UserData {
   private _runtimeNodeUserData: UserData;
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
-    const adminUserDataFilePath = 'config/admin-userdata.yaml';
-    const runtimeUserDataFilePath = 'config/runtime-userdata.yaml';
+    const adminUserDataFilePath = 'userdata/admin-userdata.yaml';
+    const runtimeUserDataFilePath = 'userdata/runtime-userdata.yaml';
+
     /* Admin node ec2 instance userdata, More Info : https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html */
     const adminNodeUserDataOptions = {
       files: path.resolve(__dirname, adminUserDataFilePath),
@@ -47,7 +48,7 @@ export class EC2UserData {
         customOptions.environmentVariables.AWS_EFS_DNS || '',
         customOptions.environmentVariables.CLOUDWATCH_NAMESPACE || '',
         customOptions.awsRegion,
-        customOptions.adminNodelogGroup.logGroupName,
+        customOptions.adminNodelogGroupName,
         customOptions.environmentVariables.CONFIG_ENCRYPTION_KEY || '',
         customOptions.environmentVariables.ENABLE_CLOUDWATCH_LOGS,
         customOptions.environmentVariables.METRICS_SCRAPE_INTERVAL_IN_SECONDS
@@ -76,7 +77,7 @@ export class EC2UserData {
         customOptions.environmentVariables.AWS_EFS_DNS || '',
         customOptions.environmentVariables.CLOUDWATCH_NAMESPACE || '',
         customOptions.awsRegion,
-        customOptions.runtimeNodelogGroup.logGroupName,
+        customOptions.runtimeNodelogGroupName,
         customOptions.environmentVariables.CONFIG_ENCRYPTION_KEY || '',
         customOptions.environmentVariables.ENABLE_CLOUDWATCH_LOGS
       ],

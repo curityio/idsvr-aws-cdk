@@ -70,8 +70,8 @@ export class IdsvrAwsCdkStack extends Stack {
     const ec2UserData = new EC2UserData(this, id, props, {
       clusterConfigBucket: clusterConfigBucket,
       environmentVariables: { ...utils.requiredEnvironmentVariables, ...utils.optionalEnvironmentVariables },
-      adminNodelogGroup: logGroup.adminNodelogGroup,
-      runtimeNodelogGroup: logGroup.runtimeNodelogGroup,
+      adminNodelogGroupName: logGroup.adminNodelogGroupName,
+      runtimeNodelogGroupName: logGroup.runtimeNodelogGroupName,
       awsRegion
     });
 
@@ -127,17 +127,12 @@ export class IdsvrAwsCdkStack extends Stack {
       cfnScalingUpPolicy: runtimeAutoScalingGroup.asgScaleUpPolicy
     });
 
-    /* If the TLS certificate is not available then the Admin UI is accessible via the public IP address of the admin node ec2 instance */
-    if (utils.requiredEnvironmentVariables.AWS_VPC_DEPLOYMENT_SUBNETS_TYPE === 'PUBLIC' && utils.optionalEnvironmentVariables.AWS_CERTIFICATE_ARN === '') {
-      new CfnOutput(this, 'curity-admin-ui', {
-        value: `https://${adminEC2Instance.adminNodeEC2Instance.instancePublicDnsName}:6749/admin`
-      });
-    }
-    /* If the TLS certificate is available then the Admin UI is accessible via the load balancer DNS */
-    if (utils.optionalEnvironmentVariables.AWS_CERTIFICATE_ARN !== '') {
-      new CfnOutput(this, 'curity-admin-ui-lb', {
-        value: `https://${alb.loadBalancer.loadBalancerDnsName}:6749/admin`
-      });
-    }
+    /* print admin UI and runtime URLs*/
+    new CfnOutput(this, 'curity-admin-ui-lb', {
+      value: `https://${alb.loadBalancer.loadBalancerDnsName}:6749/admin`
+    });
+    new CfnOutput(this, 'curity-runtime-openid-configuration', {
+      value: `https://${alb.loadBalancer.loadBalancerDnsName}/oauth/v2/oauth-anonymous/.well-known/openid-configuration`
+    });
   }
 }
