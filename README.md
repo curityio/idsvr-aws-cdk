@@ -116,7 +116,7 @@ Also, the first-run script of the Curity Identity Server will copy all files und
     Please make sure that the **AWS_PROFILE** environment variable is set in command line terminal (*export AWS_PROFILE=my-profile*) to the correct aws profile name.
    
     ```sh
-    ./deploy-idsvr-aws-cdk --install
+    ./deploy-idsvr-aws-cdk.sh --install
     ```
  5. Few other useful commands
     ```sh
@@ -143,7 +143,7 @@ Installed Resources:
 ![installed resources](./docs/aws-cdk-deployed-resources.png)
 
 ## Cleanup
-Run `./deploy-idsvr-aws-cdk --delete` to remove the installation. 
+Run `./deploy-idsvr-aws-cdk.sh --delete` to remove the installation. 
 
 ## Summary
 The deployment returns two URLs pointing to the Admin node and the runtime respectively. Before accessing the runtime, please complete the [first run configuration](https://curity.io/resources/learn/first-config/)
