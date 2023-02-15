@@ -5,9 +5,7 @@
     "idsvr-aws-cdk": "bin/idsvr-aws-cdk.js"
   },
   "scripts": {
-    "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest",
     "cdk": "cdk"
   },
   "devDependencies": {
