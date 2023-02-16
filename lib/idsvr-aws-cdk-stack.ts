@@ -35,9 +35,9 @@ export class IdsvrAwsCdkStack extends Stack {
     super(scope, id, props);
     customOptions = customOptions || {};
 
-    const awsRegion = props?.env?.region;
     const utils: Utils = new Utils();
     let awsVPC: IVpc;
+    let awsRegion: any;
 
     /* Validate environment variables have been set */
     utils.validateRequiredEnvironmentVariables();
@@ -50,6 +50,15 @@ export class IdsvrAwsCdkStack extends Stack {
     } else {
       /* Create a new VPC */
       awsVPC = new AwsVpc(this, id, props, {}).vpc;
+    }
+
+    /* read AWS region */
+    if (utils.optionalEnvironmentVariables.REGION !== '') {
+      /* set AWS region to the region set in the '.env' configuration file */
+      awsRegion = utils.optionalEnvironmentVariables.REGION;
+    } else {
+      /* set AWS region to the default region set in the AWS CLI settings */
+      awsRegion = props?.env?.region;
     }
 
     /* create a new S3 bucket to store the initial cluster configuration */
@@ -85,7 +94,7 @@ export class IdsvrAwsCdkStack extends Stack {
     const adminEC2Instance = new AdminNodeInstance(this, id, props, {
       awsRegion,
       vpc: awsVPC,
-      environmentVariables: utils.requiredEnvironmentVariables,
+      environmentVariables: { ...utils.requiredEnvironmentVariables, ...utils.optionalEnvironmentVariables },
       lambdaResource: findAmiLambdaResource.lambdaCustomResource,
       curityAdminIAMRole: iamComponents.adminIAMRole,
       adminSecurityGroup: securityGroup.adminSecurityGroup,
@@ -95,7 +104,7 @@ export class IdsvrAwsCdkStack extends Stack {
     /* creates launch template for running Curity Identity Server runtime nodes */
     const runtimeLaunchTemplate = new RuntimeLaunchTemplate(this, id, props, {
       awsRegion,
-      environmentVariables: utils.requiredEnvironmentVariables,
+      environmentVariables: { ...utils.requiredEnvironmentVariables, ...utils.optionalEnvironmentVariables },
       lambdaResource: findAmiLambdaResource.lambdaCustomResource,
       runtimeNodeUserData: ec2UserData.runtimeNodeUserData,
       runtimeSecurityGroup: securityGroup.runtimeSecurityGroup,

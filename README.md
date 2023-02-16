@@ -16,7 +16,6 @@ Installing using `aws cdk` has the following prerequisites:
 - [NodeJS & npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed. AWS CDK applications require Node.js 10.13 or later (*Node.js versions 13.0.0 through 13.6.0 are not compatible with the AWS CDK due to compatibility issues with its dependencies*)
 - [Typescript](https://www.npmjs.com/package/typescript)
 - [AWS CDK v2](https://aws.amazon.com/getting-started/guides/setup-cdk/module-two/)
-- [EC2 key Pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
 
 ## Configuration
 This project provides configuration options via an `.env` file available in the root of the project.
@@ -27,8 +26,9 @@ Parameter | Description
 `RUNTIME_INSTANCE_TYPE` | The EC2 Instance type of the Runtime node(s) 
 `RUNTIME_MIN_NODE_COUNT` | The minimum number of Runtime node(s) 
 `RUNTIME_MAX_NODE_COUNT` | The maximum number of Runtime node(s) 
-`AWS_EC2_KEY_PAIR_NAME` | The EC2 Key Pair to allow SSH access to the ec2 instances * 
-`AWS_VPC_ID` | VpcId of an existing Virtual Private Cloud (VPC) 
+`AWS_EC2_KEY_PAIR_NAME` | The EC2 Key Pair to allow SSH access to the ec2 instances, if left empty then a ec2 new key pair will be created & downloaded to the root of the project
+`AWS_VPC_ID` | VpcId of an existing Virtual Private Cloud (VPC), if not provided then a new VPC will be created
+`REGION` | AWS Region where the resources are created, for example `eu-west-1`
 `TRUSTED_IP_RANGE_CIDR` | The IP address range that can be used to SSH to the EC2 instances and access the Curity Admin UI 
 `LOADBALANCER_IP_RANGE_CIDR` | The IP address range that can be used to access Curity Runtime service through the load balancer 
 `AWS_CERTIFICATE_ARN` | The ARN of the certificate to be used by the load balancer *

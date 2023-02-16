@@ -34,7 +34,6 @@ WILDCARD_DOMAIN_NAME='*.example.cdk'
 # Create the root certificate public + private key
 #
 openssl genrsa -out $ROOT_CERT_FILE_PREFIX.key 2048
-echo '*** Successfully created Root CA key'
 
 #
 # Create the public key root certificate file
@@ -49,13 +48,13 @@ openssl req -x509 \
   -extensions v3_ca \
   -sha256 \
   -days 365
-echo '*** Successfully created Root CA'
+
 
 #
 # Create the SSL key
 #
 openssl genrsa -out $SSL_CERT_FILE_PREFIX.key 2048
-echo '*** Successfully created SSL key'
+
 
 #
 # Create the certificate signing request file
@@ -65,7 +64,7 @@ openssl req \
   -key $SSL_CERT_FILE_PREFIX.key \
   -out $SSL_CERT_FILE_PREFIX.csr \
   -subj "/CN=$WILDCARD_DOMAIN_NAME"
-echo '*** Successfully created SSL certificate signing request'
+
 
 #
 # Create the SSL certificate and private key
@@ -80,4 +79,4 @@ openssl x509 -req \
   -days 36 \
   -extfile server.ext
   
-echo '*** Successfully created SSL certificate'
+echo "Self-signed certificates have been generated since AWS validated certificate ARN was not provided in the '.env' file "
