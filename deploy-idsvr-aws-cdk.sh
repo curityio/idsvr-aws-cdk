@@ -1,5 +1,8 @@
 #!/bin/bash
 set -eo pipefail
+set -o allexport
+source .env 
+set +o allexport
 
 display_help() {
   echo -e "Usage: $(basename "$0") [-h | --help] [-i | --install]  [-d | --delete]  \n" >&2
@@ -9,6 +12,16 @@ display_help() {
   echo " --help                         shows this help message and exit                                                                 "
   echo " --install                      deploys the Curity Identity Server in to the AWS using EC2 instances                             "
   echo " --delete                       deletes the Curity Identity Server and AWS resources                                             "
+}
+
+generate_ec2_key_pair(){
+  if [[ -z "$AWS_EC2_KEY_PAIR_NAME" ]]; then
+      ec2_key_pair_name="ec2-cdk-key-pair-$RANDOM"
+      aws ec2 create-key-pair --key-name $ec2_key_pair_name --query 'KeyMaterial' --output text > "$ec2_key_pair_name".pem
+      # set permissions
+      chmod 400 "$ec2_key_pair_name".pem
+      export AWS_EC2_KEY_PAIR_NAME=$ec2_key_pair_name
+  fi
 }
 
 is_pki_already_available() {
@@ -28,6 +41,8 @@ generate_self_signed_certificates() {
 
 # Imports Self-signed certificates to AWS ACM so that they can be used in the LoadBalancer SSL configuration
 import_certificate_to_aws_acm() {
+  # set the default output to JSON, setting it here to avoid being hit by any misconfigurations in aws cli config
+  export AWS_DEFAULT_OUTPUT="json"
   cert_arn=$(aws acm import-certificate --certificate fileb://lib/alb/self-signed-certs/example.cdk.ssl.pem --private-key fileb://lib/alb/self-signed-certs/example.cdk.ssl.key --certificate-chain fileb://lib/alb/self-signed-certs/example.cdk.ca.pem | jq -r '.CertificateArn')
   export AWS_ACM_SELF_SIGNED_CERT_ARN=$cert_arn
 }
@@ -59,6 +74,7 @@ tear_down_environment() {
 
 case $1 in
 -i | --install)
+  generate_ec2_key_pair
   generate_self_signed_certificates
   import_certificate_to_aws_acm
   deploy_idsvr
