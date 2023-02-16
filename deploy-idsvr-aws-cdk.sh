@@ -14,8 +14,16 @@ display_help() {
   echo " --delete                       deletes the Curity Identity Server and AWS resources                                             "
 }
 
+set_environment_variables(){
+    if [[ -n "${REGION}" ]]; then    
+      export AWS_DEFAULT_REGION=$REGION
+    fi
+    # set the default output to JSON, setting it here to avoid being hit by any misconfigurations in aws cli config
+    export AWS_DEFAULT_OUTPUT="json"
+}
+
 generate_ec2_key_pair(){
-  if [[ -z "$AWS_EC2_KEY_PAIR_NAME" ]]; then
+  if [[ -z "${AWS_EC2_KEY_PAIR_NAME}" ]]; then
       ec2_key_pair_name="ec2-cdk-key-pair-$RANDOM"
       aws ec2 create-key-pair --key-name $ec2_key_pair_name --query 'KeyMaterial' --output text > "$ec2_key_pair_name".pem
       # set permissions
@@ -41,8 +49,6 @@ generate_self_signed_certificates() {
 
 # Imports Self-signed certificates to AWS ACM so that they can be used in the LoadBalancer SSL configuration
 import_certificate_to_aws_acm() {
-  # set the default output to JSON, setting it here to avoid being hit by any misconfigurations in aws cli config
-  export AWS_DEFAULT_OUTPUT="json"
   cert_arn=$(aws acm import-certificate --certificate fileb://lib/alb/self-signed-certs/example.cdk.ssl.pem --private-key fileb://lib/alb/self-signed-certs/example.cdk.ssl.key --certificate-chain fileb://lib/alb/self-signed-certs/example.cdk.ca.pem | jq -r '.CertificateArn')
   export AWS_ACM_SELF_SIGNED_CERT_ARN=$cert_arn
 }
@@ -74,12 +80,14 @@ tear_down_environment() {
 
 case $1 in
 -i | --install)
+  set_environment_variables
   generate_ec2_key_pair
   generate_self_signed_certificates
   import_certificate_to_aws_acm
   deploy_idsvr
   ;;
 -d | --delete)
+  set_environment_variables
   tear_down_environment
   ;;
 -h | --help)

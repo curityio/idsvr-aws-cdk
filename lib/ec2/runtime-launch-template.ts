@@ -22,7 +22,7 @@ export class RuntimeLaunchTemplate {
 
   constructor(stack: IdsvrAwsCdkStack, id: string, props?: StackProps, customOptions?: any) {
     this._runtimeLaunchTemplate = new LaunchTemplate(stack, 'curity-runtime-node', {
-      instanceType: new InstanceType(process.env.RUNTIME_INSTANCE_TYPE || 't3.small'),
+      instanceType: new InstanceType(customOptions.environmentVariables.RUNTIME_INSTANCE_TYPE),
       launchTemplateName: 'curity-runtime-node',
       keyName: customOptions.environmentVariables.AWS_EC2_KEY_PAIR_NAME,
       machineImage: new GenericLinuxImage({

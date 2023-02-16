@@ -28,7 +28,7 @@ Parameter | Description
 `RUNTIME_MAX_NODE_COUNT` | The maximum number of Runtime node(s) 
 `AWS_EC2_KEY_PAIR_NAME` | The EC2 Key Pair to allow SSH access to the ec2 instances, if left empty then a ec2 new key pair will be created & downloaded to the root of the project
 `AWS_VPC_ID` | VpcId of an existing Virtual Private Cloud (VPC), if not provided then a new VPC will be created
-`AWS_DEPLOYMENT_REGION` | AWS Region where the resources are created, for example `eu-west-1`
+`REGION` | AWS Region where the resources are created, for example `eu-west-1`
 `TRUSTED_IP_RANGE_CIDR` | The IP address range that can be used to SSH to the EC2 instances and access the Curity Admin UI 
 `LOADBALANCER_IP_RANGE_CIDR` | The IP address range that can be used to access Curity Runtime service through the load balancer 
 `AWS_CERTIFICATE_ARN` | The ARN of the certificate to be used by the load balancer *

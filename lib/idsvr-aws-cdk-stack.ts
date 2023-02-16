@@ -53,11 +53,11 @@ export class IdsvrAwsCdkStack extends Stack {
     }
 
     /* read AWS region */
-    if (utils.optionalEnvironmentVariables.AWS_DEPLOYMENT_REGION !== '') {
-      /*set AWS region to the region set in the '.env' configuration file */
-      awsRegion = utils.optionalEnvironmentVariables.AWS_DEPLOYMENT_REGION;
+    if (utils.optionalEnvironmentVariables.REGION !== '') {
+      /* set AWS region to the region set in the '.env' configuration file */
+      awsRegion = utils.optionalEnvironmentVariables.REGION;
     } else {
-      /*set AWS region to the default region set in the AWS CLI settings */
+      /* set AWS region to the default region set in the AWS CLI settings */
       awsRegion = props?.env?.region;
     }
 
