@@ -43,6 +43,7 @@ Parameter | Description
 `CONFIG_ENCRYPTION_KEY` | The key to encrypt the Curity Configuration
 
   \* This resource has to be created beforehand.
+  > **_NOTE:_**  Please note that the EC2 instance type for the Admin and Runtime nodes have been set to a default value of `t3.small` for demonstration purpose only. Please refer to the [System guide](https://curity.io/docs/idsvr/latest/system-admin-guide/system-requirements.html#recommended-hardware-setup) for production system requirements details.
 
 ### Understanding the IP Ranges
 
@@ -79,7 +80,7 @@ In order to enable this, an EFS Storage has to be created in advance. In that st
 │.. ├── overrides
 │.. ├── template-areas
 ├── plugins
-│.. ├── pluging-group1
+│.. ├── plugin-group1
 │.. ├── plugin-group2
 ```
 
